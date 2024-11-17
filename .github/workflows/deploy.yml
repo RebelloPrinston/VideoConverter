@@ -1,0 +1,77 @@
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: video-converter-gke
+  GKE_ZONE: us-east1-b
+
+jobs:
+  setup-build-publish-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Setup gcloud CLI
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+
+      # Configure Docker for authentication
+      - name: Configure Docker Authentication
+        run: gcloud auth configure-docker --quiet
+
+      # Get GKE Credentials
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
+          credentials: ${{ secrets.GKE_SA_KEY }}
+
+      # Sequentially Build, Push, and Deploy Each Service
+      - name: Build, Push, and Deploy Auth Service
+        run: |
+          echo "Building and deploying auth service..."
+          docker build -t gcr.io/$PROJECT_ID/auth:$GITHUB_SHA python/src/auth
+          docker push gcr.io/$PROJECT_ID/auth:$GITHUB_SHA
+          kubectl apply -f python/src/auth/manifests
+          kubectl rollout status deployment/auth-deploy
+
+      - name: Build, Push, and Deploy Converter Service
+        run: |
+          echo "Building and deploying converter service..."
+          docker build -t gcr.io/$PROJECT_ID/converter:$GITHUB_SHA python/src/converter
+          docker push gcr.io/$PROJECT_ID/converter:$GITHUB_SHA
+          kubectl apply -f python/src/converter/manifests
+          kubectl rollout status deployment/converter-deploy
+
+      - name: Build, Push, and Deploy Gateway Service
+        run: |
+          echo "Building and deploying gateway service..."
+          docker build -t gcr.io/$PROJECT_ID/gateway:$GITHUB_SHA python/src/gateway
+          docker push gcr.io/$PROJECT_ID/gateway:$GITHUB_SHA
+          kubectl apply -f python/src/gateway/manifests
+          kubectl rollout status deployment/gateway-deploy
+
+      - name: Deploy MongoDB
+        run: |
+          echo "Deploying MongoDB..."
+          kubectl apply -f python/src/mongo/manifests
+          kubectl rollout status deployment/mongodb-deployment
+
+      - name: Deploy RabbitMQ
+        run: |
+          echo "Deploying RabbitMQ..."
+          kubectl apply -f python/src/rabbit/manifests
+          kubectl rollout status statefulset/rabbitmq
