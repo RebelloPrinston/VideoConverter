@@ -33,7 +33,7 @@ jobs:
 
       # Configure Docker for authentication
       - name: Configure Docker Authentication
-        run: gcloud auth configure-docker --quiet
+        run: gcloud auth configure-docker gcr.io --quiet
 
       # Get GKE Credentials
       - name: Get GKE Credentials
