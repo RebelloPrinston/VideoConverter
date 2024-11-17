@@ -37,7 +37,7 @@ jobs:
         with:
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.GKE_ZONE }}
-          credentials: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
 
       # Sequentially Build, Push, and Deploy Each Service
       - name: Build, Push, and Deploy Auth Service
