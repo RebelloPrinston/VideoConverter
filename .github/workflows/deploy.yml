@@ -51,15 +51,7 @@ jobs:
           docker push gcr.io/$PROJECT_ID/auth:$GITHUB_SHA
           kubectl apply -f python/src/auth/manifests
           kubectl rollout status deployment/auth
-
-      - name: Build, Push, and Deploy Converter Service
-        run: |
-          echo "Building and deploying converter service..."
-          docker build -t gcr.io/$PROJECT_ID/converter:$GITHUB_SHA python/src/converter
-          docker push gcr.io/$PROJECT_ID/converter:$GITHUB_SHA
-          kubectl apply -f python/src/converter/manifests
-          kubectl rollout status deployment/converter
-
+    
       - name: Build, Push, and Deploy Gateway Service
         run: |
           echo "Building and deploying gateway service..."
@@ -68,14 +60,22 @@ jobs:
           kubectl apply -f python/src/gateway/manifests
           kubectl rollout status deployment/gateway
 
-      - name: Deploy MongoDB
-        run: |
-          echo "Deploying MongoDB..."
-          kubectl apply -f python/src/mongo/manifests
-          kubectl rollout status deployment/mongodb
-
       - name: Deploy RabbitMQ
         run: |
           echo "Deploying RabbitMQ..."
           kubectl apply -f python/src/rabbit/manifests
           kubectl rollout status statefulset/rabbitmq
+
+      - name: Build, Push, and Deploy Converter Service
+        run: |
+          echo "Building and deploying converter service..."
+          docker build -t gcr.io/$PROJECT_ID/converter:$GITHUB_SHA python/src/converter
+          docker push gcr.io/$PROJECT_ID/converter:$GITHUB_SHA
+          kubectl apply -f python/src/converter/manifests
+          kubectl rollout status deployment/converter
+      
+      - name: Deploy MongoDB
+        run: |
+          echo "Deploying MongoDB..."
+          kubectl apply -f python/src/mongo/manifests
+          kubectl rollout status deployment/mongodb
