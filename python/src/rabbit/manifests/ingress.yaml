@@ -6,7 +6,7 @@ metadata:
     kubernetes.io/ingress.class: "gce"
 spec:
   rules:
-    - host: rabbitmq-manager.com
+    - host: manager.rabbitmq.com
       http:
         paths:
           - path: /
