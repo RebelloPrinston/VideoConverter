@@ -1,3 +1,5 @@
+CREATE USER 'auth_user'@'localhost' IDENTIFIED BY 'Auth123';
+
 GRANT ALL PRIVILEGES ON auth.* TO 'auth_user'@'localhost';
 
 USE auth;

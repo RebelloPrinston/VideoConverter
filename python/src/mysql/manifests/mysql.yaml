@@ -20,10 +20,6 @@ spec:
               value: admin123
             - name: MYSQL_DATABASE
               value: auth
-            - name: MYSQL_USER
-              value: auth_user
-            - name: MYSQL_PASSWORD
-              value: Auth123
           ports:
             - containerPort: 3306
           volumeMounts:
