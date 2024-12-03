@@ -1,9 +1,9 @@
-# Internal MongoDB Service within Minikube
 apiVersion: v1
 kind: Service
 metadata:
   name: mongodb-service
 spec:
+  type: LoadBalancer
   selector:
     app: mongodb
   ports:

@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: gateway
 spec:
+  type: LoadBalancer
   selector:
     app: gateway
-  type: ClusterIP
   ports:
-    - port: 8080
+    - protocol: TCP
+      port: 8080
       targetPort: 8080
-      protocol: TCP
