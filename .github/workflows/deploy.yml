@@ -48,8 +48,8 @@ jobs:
       - name: Create ConfigMap for MySQL initialization
         run: |
           echo "Creating ConfigMap for MySQL initialization..."
-          kubectl create configmap mysql-init-script --from-file=python/src/mysql/init.sql
-          
+          kubectl create configmap mysql-init-script --from-file=python/src/mysql/init.sql --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Build, Push, and Deploy MySQL Service
         run: |
           echo "Building and deploying auth service..."
