@@ -63,6 +63,12 @@ jobs:
           docker push gcr.io/$PROJECT_ID/auth:$GITHUB_SHA
           kubectl apply -f python/src/auth/manifests
           kubectl rollout status deployment/auth
+      
+      - name: Deploy RabbitMQ
+        run: |
+          echo "Deploying RabbitMQ..."
+          kubectl apply -f python/src/rabbit/manifests
+          kubectl rollout status statefulset/rabbitmq
     
       - name: Build, Push, and Deploy Gateway Service
         run: |
@@ -71,12 +77,6 @@ jobs:
           docker push gcr.io/$PROJECT_ID/gateway:$GITHUB_SHA
           kubectl apply -f python/src/gateway/manifests
           kubectl rollout status deployment/gateway
-
-      - name: Deploy RabbitMQ
-        run: |
-          echo "Deploying RabbitMQ..."
-          kubectl apply -f python/src/rabbit/manifests
-          kubectl rollout status statefulset/rabbitmq
 
       - name: Build, Push, and Deploy Converter Service
         run: |
