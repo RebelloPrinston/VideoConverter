@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: shrechan/auth:lastest
+          image: shrechan/auth:latest
           ports:
             - containerPort: 5000
           envFrom:
@@ -28,3 +28,29 @@ spec:
                 name: auth-configmap
             - secretRef:
                 name: auth-secret
+          env:
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-configmap
+                  key: MYSQL_HOST
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-configmap
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secret
+                  key: MYSQL_PASSWORD
+            - name: MYSQL_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-configmap
+                  key: MYSQL_DB
+            - name: MYSQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-configmap
+                  key: MYSQL_PORT
