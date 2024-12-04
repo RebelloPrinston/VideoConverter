@@ -21,7 +21,7 @@ fs_mp3s = gridfs.GridFS(mongo_mp3.db)
 
 #fs = gridfs.GridFS(mongo.db)
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host="35.190.148.131", port=32743))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq.default.svc.cluster.local", port=32743))
 channel = connection.channel()
 
 @server.route("/login", methods=["POST"])
