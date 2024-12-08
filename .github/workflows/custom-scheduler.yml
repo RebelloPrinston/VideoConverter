@@ -27,7 +27,7 @@ jobs:
           repository: kubernetes/kubernetes
       
       - name: List files in directory
-        run: find . -name "my-scheduler.yaml"
+        run: ls ./scheduler
 
       # Step 2: Authenticate with Google Cloud
       - name: Authenticate with Google Cloud
@@ -66,8 +66,8 @@ jobs:
       # Step 9: Apply Pre-Existing Scheduler Deployment YAML
       - name: Apply Scheduler Deployment
         run: |
-          sed -i "s|<image>|gcr.io/${{ env.PROJECT_ID }}/${{ env.GCR_IMAGE_NAME }}:${{ env.GCR_TAG }}|g" scheduler/my-scheduler.yaml
-          kubectl apply -f scheduler/my-scheduler.yaml
+          sed -i "s|<image>|gcr.io/${{ env.PROJECT_ID }}/${{ env.GCR_IMAGE_NAME }}:${{ env.GCR_TAG }}|g" ./scheduler/my-scheduler.yaml
+          kubectl apply -f ./scheduler/my-scheduler.yaml
 
       # Step 10: Create ConfigMap from Pre-Existing Policy File
       - name: Create ConfigMap
