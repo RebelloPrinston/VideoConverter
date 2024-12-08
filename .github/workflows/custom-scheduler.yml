@@ -49,6 +49,14 @@ jobs:
       - name: Configure Docker Authentication
         run: gcloud auth configure-docker gcr.io --quiet
 
+      # Get GKE Credentials
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+
       # Step 5: Build Kubernetes
       - name: Build Kubernetes
         run: |
