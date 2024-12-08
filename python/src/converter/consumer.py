@@ -12,7 +12,7 @@ def main():
     fs_mp3s = gridfs.GridFS(db_mp3s)
 
     # rabbitmq connection
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq.default.svc.cluster.local", port=32743))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq.default.svc.cluster.local", port=5672, heartbeat=600,))
     channel = connection.channel()
     channel.basic_qos(prefetch_count=1)
     channel.queue_declare(
