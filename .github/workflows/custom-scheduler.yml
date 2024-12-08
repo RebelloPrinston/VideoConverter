@@ -91,9 +91,9 @@ jobs:
       # Step 10: Create ConfigMap from Pre-Existing Policy File
       - name: Create ConfigMap
         run: |
-          kubectl create configmap ${env.CONFIGMAP_NAME} \
+          kubectl create configmap ${CONFIGMAP_NAME} \
             --from-file=scheduler/policy.cfg \
-            --namespace=${env.NAMESPACE} \
+            --namespace=${NAMESPACE} \
             --dry-run=client -o yaml | kubectl apply -f -
 
       # Step 11: Update ClusterRole for Scheduler Permissions
