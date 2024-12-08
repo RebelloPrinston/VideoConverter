@@ -10,6 +10,8 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: video-converter-gke
+  GKE_ZONE: us-east1-b
   GCR_IMAGE_NAME: my-kube-scheduler
   GCR_TAG: 1.0
   NAMESPACE: kube-system
