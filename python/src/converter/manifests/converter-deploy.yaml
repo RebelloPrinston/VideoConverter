@@ -18,7 +18,6 @@ spec:
       labels:
         app: converter
     spec:
-      schedulerName: my-scheduler
       containers:
         - name: converter
           image: shrechan/converter:latest
@@ -27,3 +26,10 @@ spec:
                 name: converter-configmap
             - secretRef:
                 name: converter-secret
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
