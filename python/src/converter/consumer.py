@@ -14,6 +14,13 @@ def main():
     # rabbitmq connection
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq.default.svc.cluster.local", port=32743))
     channel = connection.channel()
+    channel.basic_qos(prefetch_count=1)
+    channel.queue_declare(
+        queue=os.environ.get("VIDEO_QUEUE"),
+        durable=True,
+        auto_delete=False,
+        exclusive=False
+    )
 
     def callback(ch, method, properties, body):
         err = to_mp3.start(body, fs_videos, fs_mp3s, ch)
