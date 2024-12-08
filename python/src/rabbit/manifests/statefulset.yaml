@@ -62,8 +62,9 @@ spec:
           readinessProbe:
             exec:
               command: ["rabbitmq-diagnostics", "check_port_connectivity"]
-            initialDelaySeconds: 20
+            initialDelaySeconds: 60
             periodSeconds: 60
+            timeoutSeconds: 15
           volumeMounts:
             - mountPath: "/var/lib/rabbitmq"
               name: rabbitmq-volume

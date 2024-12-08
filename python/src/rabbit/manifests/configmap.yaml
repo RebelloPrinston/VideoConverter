@@ -3,4 +3,10 @@ kind: ConfigMap
 metadata:
   name: rabbitmq-configmap
 data:
-  PLACEHOLDER: "NONE"
+  enabled_plugins: |
+    [rabbitmq_management,rabbitmq_peer_discovery_k8s].
+  rabbitmq.conf: |
+    cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
+    cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
+    cluster_formation.k8s.address_type = hostname
+    cluster_partition_handling = autoheal
