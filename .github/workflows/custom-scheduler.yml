@@ -79,7 +79,10 @@ jobs:
       - name: Push Docker Image
         run: docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.GCR_IMAGE_NAME }}:${{ env.GCR_TAG }}
     
-      # Step 9: Apply Pre-Existing Scheduler Deployment YAML
+      - name: Delete Existing Deployment
+        run: kubectl delete deployment my-scheduler --namespace=${{ env.NAMESPACE }} || true
+
+      # Step 9: Apply Scheduler Deployment YAML
       - name: Apply Scheduler Deployment
         run: |
           sed -i "s|<image>|gcr.io/${{ env.PROJECT_ID }}/${{ env.GCR_IMAGE_NAME }}:${{ env.GCR_TAG }}|g" scheduler/my-scheduler.yaml
