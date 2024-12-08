@@ -20,11 +20,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Your Repository
+        uses: actions/checkout@v4
+
       # Step 1: Checkout the Kubernetes Repository
       - name: Checkout Kubernetes Repository
         uses: actions/checkout@v4
         with:
           repository: kubernetes/kubernetes
+          path: kubernetes
       
       - name: List files in directory
         run: ls -la
@@ -47,7 +51,9 @@ jobs:
 
       # Step 5: Build Kubernetes
       - name: Build Kubernetes
-        run: make
+        run: |
+          cd kubernetes
+          make
 
       # Step 6: Create Dockerfile for Kube-Scheduler
       - name: Create Dockerfile
