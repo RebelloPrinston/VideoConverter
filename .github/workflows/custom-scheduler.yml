@@ -27,7 +27,7 @@ jobs:
           repository: kubernetes/kubernetes
       
       - name: List files in directory
-        run: ls -la .
+        run: find . -name "my-scheduler.yaml"
 
       # Step 2: Authenticate with Google Cloud
       - name: Authenticate with Google Cloud
