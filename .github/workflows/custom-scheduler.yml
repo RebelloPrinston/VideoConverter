@@ -26,8 +26,8 @@ jobs:
         with:
           repository: kubernetes/kubernetes
       
-      - name: List files in scheduler directory
-        run: ls -la ./scheduler
+      - name: List files in directory
+        run: ls -la .
 
       # Step 2: Authenticate with Google Cloud
       - name: Authenticate with Google Cloud
