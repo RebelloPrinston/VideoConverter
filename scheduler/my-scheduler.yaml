@@ -48,7 +48,7 @@ spec:
         - --use-legacy-policy-config=false                 
         - --policy-configmap=scheduler-policy-config
         - --policy-configmap-namespace=kube-system
-        image: gcr.io/fitinc-420904/my-kube-scheduler:1.0
+        image: gcr.io/fitinc-420904/my-kube-scheduler:1
         livenessProbe:
           httpGet:
             path: /healthz
