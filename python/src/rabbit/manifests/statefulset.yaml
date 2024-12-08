@@ -41,8 +41,6 @@ spec:
           env:
             - name: RABBITMQ_HEARTBEAT
               value: "600"
-            - name: RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS
-              value: "-rabbitmq_server vm_memory_high_watermark.absolute=512MiB"
           envFrom:
             - configMapRef:
                 name: rabbitmq-configmap
