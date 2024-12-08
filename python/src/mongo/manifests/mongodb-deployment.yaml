@@ -12,6 +12,7 @@ spec:
       labels:
         app: mongodb
     spec:
+      schedulerName: my-scheduler
       containers:
       - name: mongodb
         image: mongo:latest

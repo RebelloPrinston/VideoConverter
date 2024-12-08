@@ -18,6 +18,7 @@ spec:
       labels:
         app: converter
     spec:
+      schedulerName: my-scheduler
       containers:
         - name: converter
           image: shrechan/converter:latest
