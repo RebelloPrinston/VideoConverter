@@ -42,7 +42,6 @@ spec:
       containers:
       - command:
         - /usr/local/bin/kube-scheduler
-        - --address=0.0.0.0
         - --leader-elect=false
         - --scheduler-name=my-scheduler
         - --use-legacy-policy-config=false                 
