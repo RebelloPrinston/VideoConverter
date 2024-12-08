@@ -1,0 +1,83 @@
+name: Build and Push Kube-Scheduler
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - scheduler/**
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GCR_IMAGE_NAME: my-kube-scheduler
+  GCR_TAG: 1.0
+  NAMESPACE: kube-system
+  CONFIGMAP_NAME: scheduler-policy-config
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the Kubernetes Repository
+      - name: Checkout Kubernetes Repository
+        uses: actions/checkout@v3
+        with:
+          repository: kubernetes/kubernetes
+          ref: v1.13
+
+      # Step 2: Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GKE_SA_KEY }}
+
+      # Step 3: Set up gcloud CLI
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      # Step 4: Configure Docker Authentication for GCR
+      - name: Configure Docker Authentication
+        run: gcloud auth configure-docker gcr.io --quiet
+
+      # Step 5: Build Kubernetes
+      - name: Build Kubernetes
+        run: make
+
+      # Step 6: Create Dockerfile for Kube-Scheduler
+      - name: Create Dockerfile
+        run: |
+          echo "FROM busybox" > Dockerfile
+          echo "ADD ./_output/local/bin/linux/amd64/kube-scheduler /usr/local/bin/kube-scheduler" >> Dockerfile
+
+      # Step 7: Build Docker Image
+      - name: Build Docker Image
+        run: docker build -t gcr.io/${{ env.PROJECT_ID }}/${{ env.GCR_IMAGE_NAME }}:${{ env.GCR_TAG }} .
+
+      # Step 8: Push Docker Image to GCR
+      - name: Push Docker Image
+        run: docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.GCR_IMAGE_NAME }}:${{ env.GCR_TAG }}
+    
+      # Step 9: Apply Pre-Existing Scheduler Deployment YAML
+      - name: Apply Scheduler Deployment
+        run: |
+          sed -i "s|<image>|gcr.io/${{ env.PROJECT_ID }}/${{ env.GCR_IMAGE_NAME }}:${{ env.GCR_TAG }}|g" scheduler/my-scheduler.yaml
+          kubectl apply -f scheduler/my-scheduler.yaml
+
+      # Step 10: Create ConfigMap from Pre-Existing Policy File
+      - name: Create ConfigMap
+        run: |
+          kubectl create configmap ${env.CONFIGMAP_NAME} \
+            --from-file=scheduler/policy.cfg \
+            --namespace=${env.NAMESPACE} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      # Step 11: Update ClusterRole for Scheduler Permissions
+      - name: Update ClusterRole
+        run: |
+          kubectl get clusterrole system:kube-scheduler -o yaml > clusterrole.yaml
+          yq eval '.rules += [{"apiGroups": [""], "resources": ["configmaps"], "verbs": ["*"]}, {"apiGroups": ["storage.k8s.io"], "resources": ["*"], "verbs": ["*"]}]' -i clusterrole.yaml
+          kubectl apply -f clusterrole.yaml
