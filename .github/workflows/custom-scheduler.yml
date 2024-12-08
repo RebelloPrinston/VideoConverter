@@ -16,18 +16,18 @@ env:
   CONFIGMAP_NAME: scheduler-policy-config
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout the Kubernetes Repository
       - name: Checkout Kubernetes Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: kubernetes/kubernetes
-
+      
       - name: List files in directory
-        run: ls ./scheduler
+        run: ls scheduler
 
       # Step 2: Authenticate with Google Cloud
       - name: Authenticate with Google Cloud
@@ -62,18 +62,12 @@ jobs:
       # Step 8: Push Docker Image to GCR
       - name: Push Docker Image
         run: docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.GCR_IMAGE_NAME }}:${{ env.GCR_TAG }}
-
-  deploy:
-    runs-on: ubuntu-latest
-
-    needs: build  # Ensure this runs after the build job completes
-
-    steps:
+    
       # Step 9: Apply Pre-Existing Scheduler Deployment YAML
       - name: Apply Scheduler Deployment
         run: |
-          sed -i "s|<image>|gcr.io/${{ env.PROJECT_ID }}/${{ env.GCR_IMAGE_NAME }}:${{ env.GCR_TAG }}|g" ./scheduler/my-scheduler.yaml
-          kubectl apply -f ./scheduler/my-scheduler.yaml
+          sed -i "s|<image>|gcr.io/${{ env.PROJECT_ID }}/${{ env.GCR_IMAGE_NAME }}:${{ env.GCR_TAG }}|g" scheduler/my-scheduler.yaml
+          kubectl apply -f scheduler/my-scheduler.yaml
 
       # Step 10: Create ConfigMap from Pre-Existing Policy File
       - name: Create ConfigMap
