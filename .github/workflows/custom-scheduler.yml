@@ -59,7 +59,7 @@ jobs:
       - name: Create Dockerfile
         run: |
           echo "FROM busybox" > Dockerfile
-          echo "ADD ./_output/local/bin/linux/amd64/kube-scheduler /usr/local/bin/kube-scheduler" >> Dockerfile
+          echo "ADD ./kubernetes/_output/local/bin/linux/amd64/kube-scheduler /usr/local/bin/kube-scheduler" >> Dockerfile
 
       # Step 7: Build Docker Image
       - name: Build Docker Image
