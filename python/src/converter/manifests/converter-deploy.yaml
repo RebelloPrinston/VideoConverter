@@ -49,8 +49,8 @@ spec:
               cpu: "500m"
               memory: "512Mi"
           volumeMounts:
-        - name: converter-data
-          mountPath: /data/files
+          - name: converter-data
+            mountPath: /data/files
       volumes:
       - name: converter-data
         persistentVolumeClaim:
