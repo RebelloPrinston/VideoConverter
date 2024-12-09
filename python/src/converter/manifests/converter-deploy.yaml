@@ -5,7 +5,7 @@ metadata:
   labels:
     app: converter
 spec:
-  replicas: 4
+  replicas: 5
   selector:
     matchLabels:
       app: converter
@@ -28,8 +28,8 @@ spec:
                 name: converter-secret
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
-            limits:
               cpu: "500m"
-              memory: "256Mi"
+              memory: "512Mi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"
