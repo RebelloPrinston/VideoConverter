@@ -18,6 +18,8 @@ spec:
       labels:
         app: converter
     spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: pool-1
       containers:
         - name: converter
           image: shrechan/converter:latest
