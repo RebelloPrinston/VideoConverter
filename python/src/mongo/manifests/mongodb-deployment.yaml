@@ -43,15 +43,3 @@ spec:
       - name: mongodb-data
         persistentVolumeClaim:
           claimName: mongodb-pvc
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mongodb-init-script
-data:
-  init-mongo.js: |
-    db = db.getSiblingDB("videos");
-    db.createCollection("video_collection");
-
-    db = db.getSiblingDB("mp3s");
-    db.createCollection("mp3_collection");
