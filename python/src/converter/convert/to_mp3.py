@@ -34,7 +34,7 @@ def start(message, fs_videos, fs_mp3s, channel):
         print(f"Saving MP3 to GridFS: {mp3_path}.")
         with open(mp3_path, "rb") as f:
             mp3_data  = f.read()
-            fid = fs_mp3s.put(mp3_data )
+            fid = fs_mp3s.put(mp3_data)
 
         # Clean up temp mp3 file
         os.remove(video_path)
