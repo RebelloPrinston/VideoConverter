@@ -21,7 +21,7 @@ fs_mp3s = gridfs.GridFS(mongo_mp3.db)
 
 #fs = gridfs.GridFS(mongo.db)
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq.default.svc.cluster.local", port=32743))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq.default.svc.cluster.local", port=5672))
 channel = connection.channel()
 
 @server.route("/login", methods=["POST"])
@@ -39,10 +39,14 @@ def upload():
         access, err = validate.token(request)
 
         if err:
-            print(f"Token validation failed: {err}")
+            server.logger.error(f"Token validation failed: {err}")
             return err
 
-        access = json.loads(access)
+        try:
+            access = json.loads(access)
+        except Exception as e:
+            server.logger.error(f"Failed to parse access: {e}")
+            return "Invalid token format", 400
 
         if access["admin"]:
             if len(request.files) > 1 or len(request.files) < 1:
@@ -52,14 +56,14 @@ def upload():
                 err = util.upload(f, fs_videos, channel, access)
 
                 if err:
-                    print(f"File upload failed: {err}")
+                    server.logger.error(f"File upload failed: {err}")
                     return err
 
             return "success!", 200
         else:
             return "not authorized", 401
     except Exception as e:
-        print("Unexpected error during upload")
+        server.logger.error("Unexpected error during upload")
         return str(e), 500
     
 @server.route("/download", methods=["GET"])
