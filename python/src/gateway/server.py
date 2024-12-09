@@ -35,26 +35,32 @@ def login():
     
 @server.route("/upload", methods=["POST"])
 def upload():
-    access, err = validate.token(request)
+    try:
+        access, err = validate.token(request)
 
-    if err:
-        return err
+        if err:
+            print(f"Token validation failed: {err}")
+            return err
 
-    access = json.loads(access)
+        access = json.loads(access)
 
-    if access["admin"]:
-        if len(request.files) > 1 or len(request.files) < 1:
-            return "exactly 1 file required", 400
+        if access["admin"]:
+            if len(request.files) > 1 or len(request.files) < 1:
+                return "exactly 1 file required", 400
 
-        for _, f in request.files.items():
-            err = util.upload(f, fs_videos, channel, access)
+            for _, f in request.files.items():
+                err = util.upload(f, fs_videos, channel, access)
 
-            if err:
-                return err
+                if err:
+                    print(f"File upload failed: {err}")
+                    return err
 
-        return "success!", 200
-    else:
-        return "not authorized", 401
+            return "success!", 200
+        else:
+            return "not authorized", 401
+    except Exception as e:
+        print("Unexpected error during upload")
+        return str(e), 500
     
 @server.route("/download", methods=["GET"])
 def download():
