@@ -12,16 +12,16 @@ server = Flask(__name__)
 
 #mongo = PyMongo(server)
 
-mongo_video = PyMongo(server, uri="mongodb://mongodb-service:27017/videos")
+mongo_video = PyMongo(server, uri="mongodb://mongodb-service:27017/videos", connect=False)
 
-mongo_mp3 = PyMongo(server, uri="mongodb://mongodb-service:27017/mp3s")
+mongo_mp3 = PyMongo(server, uri="mongodb://mongodb-service:27017/mp3s", connect=False)
 
 fs_videos = gridfs.GridFS(mongo_video.db)
 fs_mp3s = gridfs.GridFS(mongo_mp3.db)
 
 #fs = gridfs.GridFS(mongo.db)
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq.default.svc.cluster.local", port=5672))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq.default.svc.cluster.local", port=5672, heartbeat=600, blocked_connection_timeout=300))
 channel = connection.channel()
 
 @server.route("/login", methods=["POST"])
