@@ -70,14 +70,5 @@ def upload():
 def download():
     pass
 
-@server.route('/healthz', methods=['GET'])
-def healthz():
-    return "OK", 200
-
-@server.route('/readyz', methods=['GET'])
-def readyz():
-    return "Ready", 200
-
-
 if __name__ == "__main__":
     server.run(host="0.0.0.0", port=8080)
